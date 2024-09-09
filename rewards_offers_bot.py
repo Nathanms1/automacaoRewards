@@ -1,14 +1,14 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.by import By
 import time
 
-# Caminho para o WebDriver do Chrome
-PATH = "/usr/local/bin/chromedriver"
+# Caminho para o WebDriver do Edge
+PATH = "D:\\webdriver\\msedgedriver.exe"
 service = Service(PATH)
 
-# Inicializa o Chrome WebDriver
-driver = webdriver.Chrome(service=service)
+# Inicializa o Edge WebDriver
+driver = webdriver.Edge(service=service)
 
 # Acessa o site do Bing Rewards
 driver.get("https://rewards.bing.com/")
