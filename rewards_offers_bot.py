@@ -13,7 +13,8 @@ MICROSOFT_EMAIL = os.getenv('MICROSOFT_EMAIL')
 MICROSOFT_PASSWORD = os.getenv('MICROSOFT_PASSWORD')
 
 # Caminho para o WebDriver do Edge
-PATH = "D:\\webdriver\\msedgedriver.exe"
+# PATH = "D:\\webdriver\\msedgedriver.exe"
+PATH = "/usr/local/bin/msedgedriver" 
 service = Service(PATH)
 
 # Inicializa o Edge WebDriver

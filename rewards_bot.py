@@ -16,7 +16,8 @@ MICROSOFT_EMAIL = os.getenv('MICROSOFT_EMAIL')
 MICROSOFT_PASSWORD = os.getenv('MICROSOFT_PASSWORD')
 
 # Caminho para o WebDriver do Edge
-PATH = "D:\\webdriver\\msedgedriver.exe"
+# PATH = "D:\\webdriver\\msedgedriver.exe"
+PATH = "/usr/local/bin/msedgedriver" 
 service = Service(PATH)
 
 # Inicializa o Edge WebDriver
@@ -41,7 +42,7 @@ time.sleep(5)
 # Inicializa a classe RandomWords
 r = RandomWords()
 
-for _ in range(2):  # Faz 10 pesquisas diferentes
+for _ in range(10):  # Faz 10 pesquisas diferentes
     random_word = r.get_random_word()
     # Localiza a barra de pesquisa
     search_bar = driver.find_element(By.NAME, "q")
