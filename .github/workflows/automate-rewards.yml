@@ -3,13 +3,11 @@ name: Run Bots
 on:
   schedule:
     - cron: '0 9 * * *'  # Executa todos os dias às 9h00 UTC
+  workflow_dispatch:
 
 jobs:
   run-bots:
     runs-on: ubuntu-latest
-    env:
-      MICROSOFT_EMAIL: ${{ secrets.MICROSOFT_EMAIL }}
-      MICROSOFT_PASSWORD: ${{ secrets.MICROSOFT_PASSWORD }}
 
     steps:
     - name: Checkout code
@@ -23,7 +21,24 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install python-dotenv
+        pip install python-dotenv selenium
+
+    - name: Download Edge WebDriver
+      run: |
+        # Baixa a versão mais recente do WebDriver
+        wget https://msedgedriver.azureedge.net/LATEST_RELEASE -O version.txt
+        VERSION=$(cat version.txt)
+        wget https://msedgedriver.azureedge.net/${VERSION}/edgedriver_linux64.zip
+
+        # Descompacta o WebDriver
+        unzip edgedriver_linux64.zip
+        
+        # Move o WebDriver para o diretório de binários do sistema
+        sudo mv msedgedriver /usr/local/bin/msedgedriver
+
+    - name: Check WebDriver Path
+      run: |
+        ls -l /usr/local/bin/msedgedriver
 
     - name: Run rewards bot
       run: |
