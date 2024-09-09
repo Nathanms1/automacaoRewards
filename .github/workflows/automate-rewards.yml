@@ -2,11 +2,10 @@ name: Run Bots
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # Executa todos os dias às 9h00 UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # Executa diariamente à meia-noite UTC
 
 jobs:
-  run-bots:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,36 +13,29 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v3
       with:
-        python-version: 3.12
+        python-version: '3.12'
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
-        pip install python-dotenv selenium
+        python -m pip install --upgrade pip
+        pip install selenium random-word
 
-    - name: Download Edge WebDriver
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v2
+      with:
+        chrome-version: 'latest'
+
+    - name: Install ChromeDriver
       run: |
-        # Baixa a versão mais recente do WebDriver
-        wget https://msedgedriver.azureedge.net/LATEST_RELEASE -O version.txt
-        VERSION=$(cat version.txt)
-        wget https://msedgedriver.azureedge.net/${VERSION}/edgedriver_linux64.zip
+        wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/chromedriver
+        sudo chmod +x /usr/local/bin/chromedriver
 
-        # Descompacta o WebDriver
-        unzip edgedriver_linux64.zip
-        
-        # Move o WebDriver para o diretório de binários do sistema
-        sudo mv msedgedriver /usr/local/bin/msedgedriver
-
-    - name: Check WebDriver Path
-      run: |
-        ls -l /usr/local/bin/msedgedriver
-
-    - name: Run rewards bot
-      run: |
-        python rewards_bot.py
-
-    - name: Run offers bot
-      run: |
-        python rewards_offers_bot.py
+    - name: Run scripts
+      env:
+        MICROSOFT_EMAIL: ${{ secrets.MICROSOFT_EMAIL }}
+        MICROSOFT_PASSWORD: ${{ secrets.MICROSOFT_PASSWORD }}
+      run: python run_all_bots.py
