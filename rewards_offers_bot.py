@@ -1,38 +1,14 @@
 from selenium import webdriver
-from selenium.webdriver.edge.service import Service
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 import time
-import os
-from dotenv import load_dotenv
 
-# Carregar variáveis de ambiente do .env
-load_dotenv()
-
-# Recupera as credenciais do ambiente
-MICROSOFT_EMAIL = os.getenv('MICROSOFT_EMAIL')
-MICROSOFT_PASSWORD = os.getenv('MICROSOFT_PASSWORD')
-
-# Caminho para o WebDriver do Edge
-# PATH = "D:\\webdriver\\msedgedriver.exe"
-PATH = "/usr/local/bin/msedgedriver" 
+# Caminho para o WebDriver do Chrome
+PATH = "/usr/local/bin/chromedriver"
 service = Service(PATH)
 
-# Inicializa o Edge WebDriver
-driver = webdriver.Edge(service=service)
-
-# Acessa o site do Bing Rewards
-driver.get("https://login.live.com/")
-email_input = driver.find_element(By.NAME, "loginfmt")
-email_input.send_keys(MICROSOFT_EMAIL)
-email_input.send_keys(Keys.RETURN)
-time.sleep(2)
-password_input = driver.find_element(By.NAME, "passwd")
-password_input.send_keys(MICROSOFT_PASSWORD)
-password_input.send_keys(Keys.RETURN)
-
-# Aguarda o login ser realizado
-time.sleep(5)
+# Inicializa o Chrome WebDriver
+driver = webdriver.Chrome(service=service)
 
 # Acessa o site do Bing Rewards
 driver.get("https://rewards.bing.com/")
