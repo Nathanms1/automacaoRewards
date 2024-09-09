@@ -1,49 +1,42 @@
-name: Run Bots
+name: Automação Rewards
 
 on:
   schedule:
-    - cron: '0 9 * * *'  # Executa todos os dias às 9h00 UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *' # Executa diariamente à meia-noite
 
 jobs:
-  run-bots:
+  run_bots:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checar código
       uses: actions/checkout@v3
 
-    - name: Set up Python
+    - name: Configurar Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.12
 
-    - name: Install dependencies
+    - name: Instalar dependências
       run: |
-        pip install -r requirements.txt
-        pip install python-dotenv selenium
+        python -m pip install --upgrade pip
+        pip install selenium random-word
 
-    - name: Download Edge WebDriver
+    - name: Baixar e instalar WebDriver do Edge
       run: |
-        # Baixa a versão mais recente do WebDriver
-        wget https://msedgedriver.azureedge.net/LATEST_RELEASE -O version.txt
-        VERSION=$(cat version.txt)
-        wget https://msedgedriver.azureedge.net/${VERSION}/edgedriver_linux64.zip
+        wget https://msedgedriver.azureedge.net/LATEST_RELEASE -O latest_release.txt
+        EDGE_VERSION=$(cat latest_release.txt)
+        wget https://msedgedriver.azureedge.net/$EDGE_VERSION/edgedriver_linux64.zip
+        unzip edgedriver_linux64.zip -d /usr/local/bin
+        chmod +x /usr/local/bin/msedgedriver
 
-        # Descompacta o WebDriver
-        unzip edgedriver_linux64.zip
-        
-        # Move o WebDriver para o diretório de binários do sistema
-        sudo mv msedgedriver /usr/local/bin/msedgedriver
-
-    - name: Check WebDriver Path
+    - name: Verificar WebDriver
       run: |
         ls -l /usr/local/bin/msedgedriver
+        /usr/local/bin/msedgedriver --version
 
-    - name: Run rewards bot
-      run: |
-        python rewards_bot.py
-
-    - name: Run offers bot
-      run: |
-        python rewards_offers_bot.py
+    - name: Executar scripts
+      env:
+        EMAIL: ${{ secrets.MS_EMAIL }}
+        PASSWORD: ${{ secrets.MS_PASSWORD }}
+      run: python run_all_bots.py
