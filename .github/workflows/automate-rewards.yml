@@ -1,28 +1,34 @@
-name: Run Python Scripts
+name: Run Bots
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Executa todos os dias às 08:00 UTC
-  workflow_dispatch:  # Permite a execução manual
+    - cron: '0 9 * * *'  # Executa todos os dias às 9h00 UTC
 
 jobs:
-  build:
+  run-bots:
     runs-on: ubuntu-latest
+    env:
+      MICROSOFT_EMAIL: ${{ secrets.MICROSOFT_EMAIL }}
+      MICROSOFT_PASSWORD: ${{ secrets.MICROSOFT_PASSWORD }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: 3.12
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install selenium random-word
+        pip install -r requirements.txt
+        pip install python-dotenv
 
-    - name: Run scripts
+    - name: Run rewards bot
       run: |
-        python run_all_bots.py
+        python rewards_bot.py
+
+    - name: Run offers bot
+      run: |
+        python rewards_offers_bot.py
