@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 import time
 import os
 from dotenv import load_dotenv
