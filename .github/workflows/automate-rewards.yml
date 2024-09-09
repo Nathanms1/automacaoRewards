@@ -1,42 +1,41 @@
-name: Automação Rewards
+name: Run Bots
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Executa diariamente à meia-noite
+    - cron: '0 0 * * *'  # Executa diariamente à meia-noite UTC
 
 jobs:
-  run_bots:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checar código
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Configurar Python
-      uses: actions/setup-python@v4
+    - name: Set up Python
+      uses: actions/setup-python@v3
       with:
-        python-version: 3.12
+        python-version: '3.12'
 
-    - name: Instalar dependências
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install selenium random-word
 
-    - name: Baixar e instalar WebDriver do Edge
-      run: |
-        wget https://msedgedriver.azureedge.net/LATEST_RELEASE -O latest_release.txt
-        EDGE_VERSION=$(cat latest_release.txt)
-        wget https://msedgedriver.azureedge.net/$EDGE_VERSION/edgedriver_linux64.zip
-        unzip edgedriver_linux64.zip -d /usr/local/bin
-        chmod +x /usr/local/bin/msedgedriver
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v2
+      with:
+        chrome-version: 'latest'
 
-    - name: Verificar WebDriver
+    - name: Install ChromeDriver
       run: |
-        ls -l /usr/local/bin/msedgedriver
-        /usr/local/bin/msedgedriver --version
+        wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/chromedriver
+        sudo chmod +x /usr/local/bin/chromedriver
 
-    - name: Executar scripts
+    - name: Run scripts
       env:
-        EMAIL: ${{ secrets.MS_EMAIL }}
-        PASSWORD: ${{ secrets.MS_PASSWORD }}
+        MICROSOFT_EMAIL: ${{ secrets.MICROSOFT_EMAIL }}
+        MICROSOFT_PASSWORD: ${{ secrets.MICROSOFT_PASSWORD }}
       run: python run_all_bots.py
